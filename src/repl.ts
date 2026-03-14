@@ -2,10 +2,10 @@ import { createInterface } from "node:readline";
 import { getCommands } from "./command.js";
 import { State } from "./state.js";
 
-export function startREPL(state: State) {
+export async function startREPL(state: State) {
     state.readline.prompt();
 
-    state.readline.on('line', (line: string) => {
+    state.readline.on('line', async (line: string) => {
     if (line.length === 0) {
         state.readline.prompt();
     } else {
@@ -19,7 +19,7 @@ export function startREPL(state: State) {
         }
 
         try {
-            command.callback(state);
+            await command.callback(state);
         } catch (e) {
             console.log("Error occured: " + e)
         }
