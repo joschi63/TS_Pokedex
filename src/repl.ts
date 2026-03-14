@@ -1,36 +1,37 @@
 import { createInterface } from "node:readline";
 import { getCommands } from "./command.js";
-const rl = createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  prompt: 'Pokedex > ',
-});
+import { State } from "./state.js";
 
-export function startREPL() {
-    rl.prompt();
-}
+export function startREPL(state: State) {
+    state.readline.prompt();
 
-rl.on('line', (line: string) => {
+    state.readline.on('line', (line: string) => {
     if (line.length === 0) {
-        rl.prompt();
+        state.readline.prompt();
     } else {
         const input = cleanInput(line);
-        const commands = getCommands();
-        const command = commands[input[0]];
+        const command = state.commands[input[0]];
 
         if (!command) {
             console.log("Unknown command");
-            rl.prompt();
+            state.readline.prompt();
             return;
         }
 
-        command.callback(commands);
+        try {
+            command.callback(state);
+        } catch (e) {
+            console.log("Error occured: " + e)
+        }
 
         if (command.name !== "exit") {
-            rl.prompt();
+            state.readline.prompt();
         }
     }
 })
+}
+
+
 
 
 export function cleanInput(input: string): string[] {

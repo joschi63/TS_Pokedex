@@ -1,23 +1,18 @@
 import { commandExit } from "#src/command_exit.js";
 import { commandHelp } from "#src/command_help.js";
-
-export type CLICommand = {
-  name: string;
-  description: string;
-  callback: (commands: Record<string, CLICommand>) => void;
-};
+import type { CLICommand, State } from "#src/state.js";
 
 export function getCommands(): Record<string, CLICommand> {
   return {
     exit: {
       name: "exit",
       description: "Exits the pokedex",
-      callback: commandExit,
+      callback: (state: State) => commandExit(state),
     },
     help: {
         name: "help",
         description: "Shows help for usage",
-        callback: commandHelp,
+        callback: (state: State) => commandHelp(state),
     }
     // can add more commands here
   };
