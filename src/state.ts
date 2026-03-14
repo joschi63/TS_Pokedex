@@ -1,5 +1,5 @@
 import { createInterface, Interface } from "node:readline";
-import { getCommands } from "./command.js";
+import { getCommands } from "./commands/command.js";
 import { PokeAPI } from "./pokeapi.js";
 
 export type State = {

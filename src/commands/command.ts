@@ -1,5 +1,5 @@
-import { commandExit } from "#src/command_exit.js";
-import { commandHelp } from "#src/command_help.js";
+import { commandExit } from "#src/commands/command_exit.js";
+import { commandHelp } from "#src/commands/command_help.js";
 import type { CLICommand, State } from "#src/state.js";
 import { commandMap } from "./command_map.js";
 import { commandMapBack } from "./command_map_back.js";

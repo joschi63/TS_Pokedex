@@ -1,13 +1,13 @@
-import { ShallowLocations } from "./pokeapi.js";
-import { State } from "./state.js";
+import { ShallowLocations } from "../pokeapi.js";
+import { State } from "../state.js";
 
-export async function commandMapBack(state: State) {
-    if (!state.previousLocationsURL) {
-        console.log("you're on the first page");
+export async function commandMap(state: State) {
+    if (!state.nextLocationsURL) {
+        console.log("you're on the last page");
         return;
     }
 
-    const locations: ShallowLocations = await state.location.fetchLocations(state.previousLocationsURL);
+    const locations: ShallowLocations = await state.location.fetchLocations(state.nextLocationsURL);
     state.nextLocationsURL = locations.next ?? null;
     state.previousLocationsURL = locations.previous ?? null;
 
