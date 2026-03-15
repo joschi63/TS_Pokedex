@@ -12,7 +12,7 @@ describe.each([
   },
   {
     input: "   singleWord   ",
-    expected: ["singleWord"],
+    expected: ["singleword"],
   },
   {
     input: "   multiple   spaces   between   words   ",

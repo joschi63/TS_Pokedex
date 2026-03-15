@@ -25,7 +25,7 @@ export function initState(): State {
         }),
         commands: getCommands(),
         location: new PokeAPI(),
-        nextLocationsURL: "https://pokeapi.co/api/v2/location-area",
+        nextLocationsURL: "https://pokeapi.co/api/v2/location-area?offset=0&limit=20",
         previousLocationsURL: null
     };
 }
