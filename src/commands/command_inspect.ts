@@ -1,4 +1,4 @@
-import { Pokemon } from "#src/pokeapi.js";
+import { type Pokemon } from "#src/types/pokemon.type.js";
 import { State } from "#src/state.js";
 
 export function commandInspect(state: State, name: string) {

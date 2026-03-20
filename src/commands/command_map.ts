@@ -1,4 +1,4 @@
-import { ShallowLocations } from "../pokeapi.js";
+import { type ShallowLocations } from "../types/location.types.js";
 import { State } from "../state.js";
 
 export async function commandMap(state: State) {
