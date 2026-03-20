@@ -1,4 +1,5 @@
 import { Cache } from "./pokecache.js";
+import { useAPICall } from "./hooks/use_api_call.js";
 
 export class PokeAPI {
   private static readonly baseURL = "https://pokeapi.co/api/v2";
@@ -10,52 +11,46 @@ export class PokeAPI {
     
     const url = pageURL ?? `${PokeAPI.baseURL}/location-area?offset=0&limit=20`;
 
-    const cachedData = this.cache.get<ShallowLocations>(url);
-
-    if (cachedData) {
-        return cachedData.val as ShallowLocations;
-    }
-
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch locations: ${response.status} ${response.statusText}`);
-    }
-
-    const data: unknown = await response.json();
-    if (!isShallowLocations(data)) {
-      throw new Error("Invalid locations response format from PokeAPI");
-    }
-
-    this.cache.add(url, data);
-
-    return data;
+    return await useAPICall<ShallowLocations>(url, "locations", this.cache);
   }
 
   async fetchLocation(locationName: string): Promise<Location> {
-    const url = `https://pokeapi.co/api/v2/location-area/${locationName}`;
+    const url = `${PokeAPI.baseURL}/location-area/${locationName}`;
 
-    const cached = this.cache.get<Location>(url);
-    if (cached) {
-      return cached.val as Location;
-    }
-
-    try {
-      const resp = await fetch(url);
-
-      if (!resp.ok) {
-        throw new Error(`${resp.status} ${resp.statusText}`);
-      }
-
-      const location: Location = await resp.json();
-      this.cache.add(url, location);
-      return location;
-    } catch (e) {
-      throw new Error(
-        `Error fetching location '${locationName}': ${(e as Error).message}`,
-      );
-    }
+    return await useAPICall<Location>(url, "location", this.cache, locationName);
   }
+
+  async fetchPokemon(name: string): Promise<Pokemon> {
+    const url = `${PokeAPI.baseURL}/pokemon/${name}`;
+
+    return await useAPICall<Pokemon>(url, "pokemon", this.cache, name);
+  }
+}
+
+export type Pokemon = {
+    id: string;
+    name: string;
+    base_experience: number;
+    height: number;
+    is_default: boolean;
+    order: number;
+    weight: number;
+    stats: [
+        {
+            base_stat: number,
+            effort: number,
+            stat: {
+                name: string,
+            },
+        },
+    ],
+    types: [
+        {
+           type: {
+            name: string,
+           } 
+        }
+    ]
 }
 
 export type ShallowLocations = {
@@ -120,39 +115,3 @@ export type Location = {
     }[];
   }[];
 };
-
-function isShallowLocations(value: unknown): value is ShallowLocations {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-
-  const data = value as {
-    count?: unknown;
-    next?: unknown;
-    previous?: unknown;
-    results?: unknown;
-  };
-
-  if (typeof data.count !== "number") {
-    return false;
-  }
-
-  const nextIsValid = typeof data.next === "string" || data.next === null;
-  const previousIsValid = typeof data.previous === "string" || data.previous === null;
-  if (!nextIsValid || !previousIsValid) {
-    return false;
-  }
-
-  if (!Array.isArray(data.results)) {
-    return false;
-  }
-
-  return data.results.every((location) => {
-    if (!location || typeof location !== "object") {
-      return false;
-    }
-
-    const parsed = location as { name?: unknown; url?: unknown };
-    return typeof parsed.name === "string" && typeof parsed.url === "string";
-  });
-}
