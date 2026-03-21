@@ -6,6 +6,7 @@ import { commandExplore } from "./command_explore.js";
 import { commandInspect } from "./command_inspect.js";
 import { commandMap } from "./command_map.js";
 import { commandMapBack } from "./command_map_back.js";
+import { commandPokedex } from "./command_pokedex.js";
 
 export function getCommands(): Record<string, CLICommand> {
   return {
@@ -43,6 +44,11 @@ export function getCommands(): Record<string, CLICommand> {
       name: "inspect",
       description: "Gives you details about pokemon you've caught",
       callback: async (state: State, ...args: string[]) => await commandInspect(state, args[0]),
+    },
+    pokedex: {
+      name: "pokedex",
+      description: "Prints all caught pokemons of your pokedex",
+      callback: async (state: State) => commandPokedex(state),
     }
   };
 }
